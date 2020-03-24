@@ -13,12 +13,11 @@ class CustomView @JvmOverloads constructor(
 ) : View(context, attrs, defStyleAttr) {
 
     private lateinit var bitMap: Bitmap
-    private lateinit var scaledBitmap: Bitmap
     private var left: Float = 0F
     private var top: Float = 0F
     private var ratio: Float = 0F
-    private var newWidth: Int = 0
-    private var newHeight: Int = 0
+    private var newWidth: Float = 0F
+    private var newHeight: Float = 0F
 
 
     fun setImageBitmap(bitMap: Bitmap) {
@@ -27,34 +26,25 @@ class CustomView @JvmOverloads constructor(
 
     override fun onDraw(canvas: Canvas) {
         if(bitMap.width > canvas.width || bitMap.height > canvas.height){
-            scaledBitmap = if(bitMap.width > bitMap.height){
-                ratio = bitMap.width/bitMap.height.toFloat()
-                newWidth = canvas.width
-                newHeight = (newWidth / ratio).roundToInt()
-                Bitmap.createScaledBitmap(this.bitMap, newWidth, newHeight, false)
+            if (canvas.width <= canvas.height) {
+                ratio = bitMap.width / bitMap.height.toFloat()
+                newWidth = canvas.width.toFloat()
+                newHeight = newWidth / ratio
+                canvas.save()
+                canvas.scale(
+                    newWidth/bitMap.width,
+                    newHeight/bitMap.height)
             } else {
-                ratio = bitMap.height/bitMap.width.toFloat()
-                newHeight = canvas.height
-                newWidth = (newHeight / ratio).roundToInt()
-                Bitmap.createScaledBitmap(this.bitMap, newWidth, newHeight, false)
+                ratio = bitMap.height.toFloat() / bitMap.width.toFloat()
+                newHeight = canvas.height.toFloat()
+                newWidth = newHeight / ratio
+                canvas.save()
+                canvas.scale(
+                    newWidth/bitMap.width,
+                    newHeight/bitMap.height)
             }
-
-            if (bitMap.height == bitMap.width){
-                scaledBitmap = if(canvas.width < canvas.height){
-                    ratio = bitMap.width/bitMap.height.toFloat()
-                    newWidth = canvas.width
-                    newHeight = (newWidth / ratio).roundToInt()
-                    Bitmap.createScaledBitmap(this.bitMap, newWidth, newHeight, false)
-                } else {
-                    ratio = bitMap.height/bitMap.width.toFloat()
-                    newHeight = canvas.height
-                    newWidth = (newHeight / ratio).roundToInt()
-                    Bitmap.createScaledBitmap(this.bitMap, newWidth, newHeight, false)
-                }
-            }
-            left = ((canvas.width - scaledBitmap.width) / 2).toFloat()
-            top = ((canvas.height - scaledBitmap.height) / 2).toFloat()
-            canvas.drawBitmap(scaledBitmap, left, top, null)
+            canvas.drawBitmap(bitMap, 0F, 0F, null)
+            canvas.restore()
         } else {
             left = ((canvas.width - bitMap.width) / 2).toFloat()
             top = ((canvas.height - bitMap.height) / 2).toFloat()

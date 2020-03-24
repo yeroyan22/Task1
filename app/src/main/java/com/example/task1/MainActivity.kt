@@ -14,7 +14,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        val inputStream = BufferedInputStream(this.assets.open("sq.JPG"))
+        val inputStream = BufferedInputStream(this.assets.open("hippo.jpg"))
         val bitMap = BitmapFactory.decodeStream(inputStream)
 
 
